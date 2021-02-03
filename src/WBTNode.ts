@@ -46,8 +46,8 @@ export function singleLeft<T>(a: WBTNode<T>): WBTNode<T> {
   if (a.right === undefined) return a
   const b = a.right
 
-  a.size -= b.right?.size ?? 0
-  b.size += a.left?.size ?? 0
+  a.size -= (b.right?.size ?? 0) + 1
+  b.size += (a.left?.size ?? 0) + 1
 
   a.right = b.left
   b.left = a
@@ -69,8 +69,8 @@ export function singleRight<T>(c: WBTNode<T>): WBTNode<T> {
   if (c.left === undefined) return c
   const b = c.left
 
-  c.size -= b.left?.size ?? 0
-  b.size += c.right?.size ?? 0
+  c.size -= (b.left?.size ?? 0) + 1
+  b.size += (c.right?.size ?? 0) + 1
 
   c.left = b.right
   b.right = c
@@ -187,10 +187,14 @@ export function insert<T>(
   const comparison = compare(value, node.value)
 
   if (comparison < 0) {
+    const oldSize = node.left?.size ?? 0
     node.left = insert(value, node.left, compare)
+    node.size += node.left.size - oldSize
     return balanceRight(node)
   } else if (comparison > 0) {
+    const oldSize = node.right?.size ?? 0
     node.right = insert(value, node.right, compare)
+    node.size += node.right.size - oldSize
     return balanceLeft(node)
   }
   return node
