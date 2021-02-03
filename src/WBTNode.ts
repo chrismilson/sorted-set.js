@@ -115,7 +115,7 @@ export function doubleRight<T>(c: WBTNode<T>): WBTNode<T> {
  * Determines whether a single rotation will be sufficient to balance the left
  * and right trees.
  */
-function isSingle(
+export function isSingle(
   left: WBTNode<unknown> | undefined,
   right: WBTNode<unknown> | undefined
 ): boolean {
@@ -128,7 +128,7 @@ function isSingle(
 /**
  * Determines whether the left and right trees are currently balanced.
  */
-function isBalanced(
+export function isBalanced(
   left: WBTNode<unknown> | undefined,
   right: WBTNode<unknown> | undefined
 ): boolean {
