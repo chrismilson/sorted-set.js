@@ -177,5 +177,19 @@ describe('Weight Balanced Tree Node', () => {
         expect(root).toBeBalanced()
       }
     })
+
+    // This test is not deterministic due to the use of Math.random and
+    // therefore would be a nightmare to debug. It is purely here to grant the
+    // developer peace of mind that the algorithm works. Due to the massive
+    // number of test cases that would be needed if the tests intended to be
+    // exhaustive, it would be unwise to implement these tests by hand.
+    it.skip('Should remain balanced while inserting random values', () => {
+      let root: WBTNode<number> | undefined = undefined
+
+      for (let i = 0; i < 1000; i++) {
+        root = insert(Math.random(), root, (a, b) => a - b)
+        expect(root).toBeBalanced()
+      }
+    })
   })
 })
