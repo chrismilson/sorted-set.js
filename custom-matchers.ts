@@ -1,4 +1,4 @@
-import { WBTNode } from './src/WBTNode'
+import { WBTNode, isBalanced } from './src/WBTNode'
 
 expect.extend({
   toHaveCorrectSizes(recieved: WBTNode<unknown>) {
@@ -25,6 +25,30 @@ expect.extend({
     return {
       pass: false,
       message: () => `Expected the tree to have correct sizes.`,
+    }
+  },
+  toBeBalanced(recieved: WBTNode<unknown>) {
+    const balanced = (node: WBTNode<unknown>): boolean => {
+      if (node === undefined) {
+        return true
+      }
+
+      return (
+        isBalanced(node.left, node.right) &&
+        balanced(node.left) &&
+        balanced(node.right)
+      )
+    }
+
+    if (balanced(recieved)) {
+      return {
+        pass: true,
+        message: () => `Expected the tree to be unbalanced.`,
+      }
+    }
+    return {
+      pass: false,
+      message: () => `Expected the tree to be balanced.`,
     }
   },
 })

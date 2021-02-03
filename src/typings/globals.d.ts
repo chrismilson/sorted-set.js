@@ -7,6 +7,12 @@ declare global {
        * node.
        */
       toHaveCorrectSizes(): R
+
+      /**
+       * Makes sure that a weight balanced tree is balanced by checking that
+       * each node satisfies the balance criteria.
+       */
+      toBeBalanced(): R
     }
   }
 }
