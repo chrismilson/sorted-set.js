@@ -20,10 +20,12 @@ describe('Weight Balanced Tree Node', () => {
           right: { value: 'b', size: 2, right: { value: 'c', size: 1 } },
         }
         const b = a.right
+        const originalSize = a.size
 
         const result = singleLeft(a)
         expect(result).toBe(b)
         expect(result).toHaveCorrectSizes()
+        expect(result.size).toBe(originalSize)
       })
     })
 
@@ -35,10 +37,12 @@ describe('Weight Balanced Tree Node', () => {
           left: { value: 'b', size: 2, left: { value: 'a', size: 1 } },
         }
         const b = c.left
+        const originalSize = c.size
 
         const result = singleRight(c)
         expect(result).toBe(b)
         expect(result).toHaveCorrectSizes()
+        expect(result.size).toBe(originalSize)
       })
     })
 
@@ -178,6 +182,26 @@ describe('Weight Balanced Tree Node', () => {
       }
     })
 
+    it('Should have the correct size while inserting values at the far right', () => {
+      let root: WBTNode<number> | undefined = undefined
+
+      for (let i = 0; i < 100; i++) {
+        root = insert(i, root, (a, b) => a - b)
+        expect(root).toHaveCorrectSizes()
+        expect(root.size).toBe(i + 1)
+      }
+    })
+
+    it('Should have the correct size while inserting values at the far left', () => {
+      let root: WBTNode<number> | undefined = undefined
+
+      for (let i = 0; i < 100; i++) {
+        root = insert(i, root, (a, b) => b - a)
+        expect(root).toHaveCorrectSizes()
+        expect(root.size).toBe(i + 1)
+      }
+    })
+
     // This test is not deterministic due to the use of Math.random and
     // therefore would be a nightmare to debug. It is purely here to grant the
     // developer peace of mind that the algorithm works. Due to the massive
@@ -190,6 +214,13 @@ describe('Weight Balanced Tree Node', () => {
         root = insert(Math.random(), root, (a, b) => a - b)
         expect(root).toBeBalanced()
       }
+    })
+
+    it('Should not insert a value that is already in the tree', () => {
+      const root = deepCopy(exampleTree)
+
+      const result = insert('a', root, (a, b) => (a < b ? -1 : a > b ? 1 : 0))
+      expect(result).toMatchObject(exampleTree)
     })
   })
 })
