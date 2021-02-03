@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "declaration": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "downlevelIteration": true,
+    "moduleResolution": "node"
+  },
+  "include": ["./src"],
+  "exclude": ["./node_modules/**/*", "**/__test__/**/*"]
+}
