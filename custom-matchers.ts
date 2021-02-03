@@ -35,6 +35,7 @@ expect.extend({
 
       return (
         isBalanced(node.left, node.right) &&
+        isBalanced(node.right, node.left) &&
         balanced(node.left) &&
         balanced(node.right)
       )
