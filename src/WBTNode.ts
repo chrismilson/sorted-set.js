@@ -8,6 +8,10 @@ export interface WBTNode<T> {
   size: number
 }
 
+/**
+ * Copies a weight balanced tree recursively. Has no protection against circular
+ * trees, so be careful.
+ */
 export function deepCopy(root: undefined): undefined
 export function deepCopy<T>(root: WBTNode<T>): WBTNode<T>
 export function deepCopy<T>(
