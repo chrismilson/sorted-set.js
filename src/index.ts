@@ -1,6 +1,6 @@
 import { insert, WBTNode } from './WBTNode'
 
-function defaultCmp(a: unknown, b: unknown) {
+export function defaultCmp(a: unknown, b: unknown): number {
   const aStr = new String(a)
   const bStr = new String(b)
   return aStr < bStr ? -1 : aStr > bStr ? 1 : 0
@@ -9,12 +9,38 @@ function defaultCmp(a: unknown, b: unknown) {
 /**
  * A sorted array implemented with a weight balanced tree.
  */
-export default class SortedArray<T> {
+export class SortedArray<T> {
+  readonly [index: number]: T
   private root?: WBTNode<T>
   private compare: (a: T, b: T) => number
 
   constructor(compare: (a: T, b: T) => number = defaultCmp) {
     this.compare = compare
+  }
+
+  get(idx: number): T | undefined {
+    // Make sure we have a valid index
+    if (idx < 0 || idx >= (this.root?.size ?? 0)) {
+      return undefined
+    }
+
+    let curr = this.root
+
+    while (curr) {
+      const lSize = curr.left?.size ?? 0
+      if (idx < lSize) {
+        // The lSize was positive, since idx >= 0, so curr.left is defined.
+        curr = curr.left
+      } else if (idx > lSize) {
+        // There are now lSize plus the current node nodes that do not hold the
+        // target value.
+        idx -= lSize + 1
+        curr = curr.right
+      } else {
+        return curr.value // We will always return here.
+      }
+    }
+    return undefined // Never reached
   }
 
   /**
@@ -129,7 +155,10 @@ export default class SortedArray<T> {
     }
   }
 
+  /**
+   * Returns a string representation of the sorted array.
+   */
   toString(): string {
-    return `<SortedArray ${[...this].toString()}>`
+    return `<SortedArray [${[...this].join(', ')}]>`
   }
 }
