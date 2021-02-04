@@ -7,10 +7,9 @@ export function defaultCmp(a: unknown, b: unknown): number {
 }
 
 /**
- * A sorted array implemented with a weight balanced tree.
+ * A sorted array.
  */
 export class SortedArray<T> {
-  readonly [index: number]: T
   private root?: WBTNode<T>
   private compare: (a: T, b: T) => number
 
@@ -18,6 +17,13 @@ export class SortedArray<T> {
     this.compare = compare
   }
 
+  /**
+   * Returns the value at the given index in the sorted order. (0-indexed)
+   *
+   * If the index is invalid, returns undefined.
+   *
+   * @param idx The index to lookup
+   */
   get(idx: number): T | undefined {
     // Make sure we have a valid index
     if (idx < 0 || idx >= (this.root?.size ?? 0)) {
