@@ -28,7 +28,7 @@ expect.extend({
     }
   },
   toBeBalanced(recieved: WBTNode<unknown>) {
-    const balanced = (node: WBTNode<unknown>): boolean => {
+    const balanced = (node: WBTNode<unknown> | undefined): boolean => {
       if (node === undefined) {
         return true
       }
