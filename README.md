@@ -22,6 +22,6 @@ arr.insert(2)
 arr.insert(2) // Does nothing, as 2 is already in there.
 
 console.log([...arr]) // [1, 2, 3, 5]
-console.log(arr[1]) // 2
-console.log(arr.indexOf(3)) // 2
+console.log(arr.get(1)) // 2
+console.log(arr.bisect(3)) // 2
 ```
