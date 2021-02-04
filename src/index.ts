@@ -26,7 +26,7 @@ export class SortedArray<T> {
    */
   get(idx: number): T | undefined {
     // Make sure we have a valid index
-    if (idx < 0 || idx >= (this.root?.size ?? 0)) {
+    if (idx < 0 || idx >= (this.root?.size ?? 0) || isNaN(idx)) {
       return undefined
     }
 
@@ -47,6 +47,10 @@ export class SortedArray<T> {
       }
     }
     return undefined // Never reached
+  }
+
+  get length(): number {
+    return this.root?.size ?? 0
   }
 
   /**
