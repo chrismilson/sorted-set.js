@@ -14,5 +14,12 @@ export default {
       format: 'es'
     }
   ],
-  plugins: [typescript({ typescript: require('typescript') })]
+  plugins: [
+    typescript({
+      typescript: require('typescript'),
+      tsconfigOverride: {
+        exclude: ["**/__tests__/**/*"]
+      }
+    })
+  ]
 }
