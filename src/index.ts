@@ -103,4 +103,33 @@ export default class SortedArray<T> {
 
     return false
   }
+
+  *[Symbol.iterator](): Generator<T> {
+    let curr = this.root
+
+    while (curr) {
+      if (curr.left === undefined) {
+        yield curr.value
+        curr = curr.right
+      } else {
+        let pre = curr.left
+        while (pre.right !== undefined && pre.right !== curr) {
+          pre = pre.right
+        }
+
+        if (pre.right === undefined) {
+          pre.right = curr
+          curr = curr.left
+        } else {
+          pre.right = undefined
+          yield curr.value
+          curr = curr.right
+        }
+      }
+    }
+  }
+
+  toString(): string {
+    return `<SortedArray ${[...this].toString()}>`
+  }
 }
