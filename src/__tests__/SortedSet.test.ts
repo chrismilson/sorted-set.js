@@ -1,9 +1,9 @@
-import { SortedArray } from '..'
+import { SortedSet } from '..'
 
 describe('SortedArray', () => {
   describe('get', () => {
     it('Should return undefined for invalid indicies', () => {
-      const arr = new SortedArray<number>((a, b) => a - b)
+      const arr = new SortedSet<number>((a, b) => a - b)
 
       arr.insert(1)
       arr.insert(5)
@@ -17,7 +17,7 @@ describe('SortedArray', () => {
 
   describe('length', () => {
     it('Should return the number of values in the tree', () => {
-      const arr = new SortedArray<number>((a, b) => a - b)
+      const arr = new SortedSet<number>((a, b) => a - b)
 
       expect(arr.length).toBe(0)
 
@@ -35,7 +35,7 @@ describe('SortedArray', () => {
 
   describe('iterator', () => {
     it('Should iterate the right values and in order', () => {
-      const arr = new SortedArray<number>((a, b) => a - b)
+      const arr = new SortedSet<number>((a, b) => a - b)
       arr.insert(2)
       arr.insert(3)
       arr.insert(1)
@@ -50,7 +50,7 @@ describe('SortedArray', () => {
 
   describe('insert', () => {
     it('Should insert values in order', () => {
-      const arr = new SortedArray<number>((a, b) => a - b)
+      const arr = new SortedSet<number>((a, b) => a - b)
 
       arr.insert(1)
       arr.insert(5)

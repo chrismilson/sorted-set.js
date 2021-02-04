@@ -1,5 +1,9 @@
 import { insert, WBTNode } from './WBTNode'
 
+/**
+ * The default comparison function. Designed to be consistend with
+ * `Array.prototype.sort()`.`
+ */
 export function defaultCmp(a: unknown, b: unknown): number {
   const aStr = new String(a)
   const bStr = new String(b)
@@ -7,9 +11,9 @@ export function defaultCmp(a: unknown, b: unknown): number {
 }
 
 /**
- * A sorted array.
+ * A sorted set.
  */
-export class SortedArray<T> {
+export class SortedSet<T> {
   private root?: WBTNode<T>
   private compare: (a: T, b: T) => number
 
@@ -54,9 +58,9 @@ export class SortedArray<T> {
   }
 
   /**
-   * Inserts a value into the sorted array.
+   * Inserts a value into the set.
    *
-   * @param value The value to insert into the array.
+   * @param value The value to insert.
    */
   insert(value: T): number {
     this.root = insert(value, this.root, this.compare)
@@ -66,12 +70,12 @@ export class SortedArray<T> {
   }
 
   /**
-   * Calculates the minimum would-be index in the sorted array if the value was
-   * inserted.
+   * Calculates the minimum would-be index in the sorted set if the value was
+   * inserted, or the actual index if the value is already in the set.
    *
    * @param value
    */
-  bisectLeft(value: T): number {
+  bisect(value: T): number {
     let result = 0
 
     let curr = this.root
@@ -85,7 +89,7 @@ export class SortedArray<T> {
         result += (curr.left?.size ?? 0) + 1
         curr = curr.right
       } else {
-        break
+        return result
       }
     }
 
@@ -93,34 +97,7 @@ export class SortedArray<T> {
   }
 
   /**
-   * Calculates the maximum would-be index in the sorted array if the value was
-   * inserted.
-   *
-   * @param value
-   */
-  bisectRight(value: T): number {
-    let result = 0
-
-    let curr = this.root
-
-    while (curr !== undefined) {
-      const comparison = this.compare(value, curr.data)
-
-      if (comparison < 0) {
-        curr = curr.left
-      } else if (comparison > 0) {
-        result += (curr.left?.size ?? 0) + 1
-        curr = curr.right
-      } else {
-        return result + curr.size
-      }
-    }
-
-    return result
-  }
-
-  /**
-   * Determines whether the value is in the sorted array.
+   * Determines whether the value is in the set.
    */
   contains(value: T): boolean {
     let curr = this.root
@@ -140,6 +117,9 @@ export class SortedArray<T> {
     return false
   }
 
+  /**
+   * Iterates over the values in the set in order.
+   */
   *[Symbol.iterator](): Generator<T> {
     // Performs a morris traversal of the tree.
     let curr = this.root
@@ -167,9 +147,9 @@ export class SortedArray<T> {
   }
 
   /**
-   * Returns a string representation of the sorted array.
+   * Returns a string representation of the sorted set.
    */
   toString(): string {
-    return `<SortedArray [${[...this].join(', ')}]>`
+    return `[ SortedSet ${[...this].join(', ')} ]`
   }
 }
