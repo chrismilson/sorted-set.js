@@ -2,33 +2,10 @@
  * Represents a node in the weight-balanced tree.
  */
 export interface WBTNode<T> {
-  value: T
+  data: T
   left?: WBTNode<T>
   right?: WBTNode<T>
   size: number
-}
-
-/**
- * Copies a weight balanced tree recursively. Has no protection against circular
- * trees, so be careful.
- */
-export function deepCopy(root: undefined): undefined
-export function deepCopy<T>(root: WBTNode<T>): WBTNode<T>
-export function deepCopy<T>(
-  root: WBTNode<T> | undefined
-): WBTNode<T> | undefined
-export function deepCopy<T>(
-  root: WBTNode<T> | undefined
-): WBTNode<T> | undefined {
-  if (root === undefined) {
-    return undefined
-  }
-
-  return {
-    ...root,
-    left: deepCopy(root.left),
-    right: deepCopy(root.right),
-  }
 }
 
 /**
@@ -181,10 +158,10 @@ export function insert<T>(
   compare: (a: T, b: T) => number
 ): WBTNode<T> {
   if (node === undefined) {
-    return { value, size: 1 }
+    return { data: value, size: 1 }
   }
 
-  const comparison = compare(value, node.value)
+  const comparison = compare(value, node.data)
 
   if (comparison < 0) {
     const oldSize = node.left?.size ?? 0

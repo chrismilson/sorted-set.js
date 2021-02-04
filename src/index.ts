@@ -43,7 +43,7 @@ export class SortedArray<T> {
         idx -= lSize + 1
         curr = curr.right
       } else {
-        return curr.value // We will always return here.
+        return curr.data // We will always return here.
       }
     }
     return undefined // Never reached
@@ -77,7 +77,7 @@ export class SortedArray<T> {
     let curr = this.root
 
     while (curr !== undefined) {
-      const comparison = this.compare(value, curr.value)
+      const comparison = this.compare(value, curr.data)
 
       if (comparison < 0) {
         curr = curr.left
@@ -104,7 +104,7 @@ export class SortedArray<T> {
     let curr = this.root
 
     while (curr !== undefined) {
-      const comparison = this.compare(value, curr.value)
+      const comparison = this.compare(value, curr.data)
 
       if (comparison < 0) {
         curr = curr.left
@@ -126,7 +126,7 @@ export class SortedArray<T> {
     let curr = this.root
 
     while (curr) {
-      const comparison = this.compare(value, curr.value)
+      const comparison = this.compare(value, curr.data)
 
       if (comparison < 0) {
         curr = curr.left
@@ -141,11 +141,12 @@ export class SortedArray<T> {
   }
 
   *[Symbol.iterator](): Generator<T> {
+    // Performs a morris traversal of the tree.
     let curr = this.root
 
     while (curr) {
       if (curr.left === undefined) {
-        yield curr.value
+        yield curr.data
         curr = curr.right
       } else {
         let pre = curr.left
@@ -158,7 +159,7 @@ export class SortedArray<T> {
           curr = curr.left
         } else {
           pre.right = undefined
-          yield curr.value
+          yield curr.data
           curr = curr.right
         }
       }

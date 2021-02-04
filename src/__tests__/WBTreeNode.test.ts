@@ -1,7 +1,6 @@
 import {
   balanceLeft,
   balanceRight,
-  deepCopy,
   doubleLeft,
   doubleRight,
   insert,
@@ -10,14 +9,33 @@ import {
   WBTNode,
 } from '../WBTNode'
 
+/**
+ * Copies a weight balanced tree recursively. Has no protection against circular
+ * trees, so be careful.
+ */
+function deepCopy(root: undefined): undefined
+function deepCopy<T>(root: WBTNode<T>): WBTNode<T>
+function deepCopy<T>(root: WBTNode<T> | undefined): WBTNode<T> | undefined
+function deepCopy<T>(root: WBTNode<T> | undefined): WBTNode<T> | undefined {
+  if (root === undefined) {
+    return undefined
+  }
+
+  return {
+    ...root,
+    left: deepCopy(root.left),
+    right: deepCopy(root.right),
+  }
+}
+
 describe('Weight Balanced Tree Node', () => {
   describe('rotation', () => {
     describe('single left', () => {
       it('Should rotate a node left and keep the sizes correct', () => {
         const a = {
-          value: 'a',
+          data: 'a',
           size: 3,
-          right: { value: 'b', size: 2, right: { value: 'c', size: 1 } },
+          right: { data: 'b', size: 2, right: { data: 'c', size: 1 } },
         }
         const b = a.right
         const originalSize = a.size
@@ -32,9 +50,9 @@ describe('Weight Balanced Tree Node', () => {
     describe('single right', () => {
       it('Should rotate a node right and keep the sizes correct', () => {
         const c = {
-          value: 'c',
+          data: 'c',
           size: 3,
-          left: { value: 'b', size: 2, left: { value: 'a', size: 1 } },
+          left: { data: 'b', size: 2, left: { data: 'a', size: 1 } },
         }
         const b = c.left
         const originalSize = c.size
@@ -48,9 +66,9 @@ describe('Weight Balanced Tree Node', () => {
 
     describe('double left', () => {
       const exampleTree = {
-        value: 'a',
+        data: 'a',
         size: 3,
-        right: { value: 'c', size: 2, left: { value: 'b', size: 1 } },
+        right: { data: 'c', size: 2, left: { data: 'b', size: 1 } },
       }
 
       it('Should rotate a node left after rotating its child right', () => {
@@ -71,9 +89,9 @@ describe('Weight Balanced Tree Node', () => {
 
     describe('double right', () => {
       const exampleTree = {
-        value: 'c',
+        data: 'c',
         size: 3,
-        left: { value: 'a', size: 2, right: { value: 'b', size: 1 } },
+        left: { data: 'a', size: 2, right: { data: 'b', size: 1 } },
       }
 
       it('Should rotate a node left after rotating its child right', () => {
@@ -95,20 +113,20 @@ describe('Weight Balanced Tree Node', () => {
 
   describe('balance', () => {
     const balancedTree = {
-      value: 'b',
+      data: 'b',
       size: 3,
-      left: { value: 'a', size: 1 },
-      right: { value: 'c', size: 1 },
+      left: { data: 'a', size: 1 },
+      right: { data: 'c', size: 1 },
     }
     const rightHeavyTree = {
-      value: 'a',
+      data: 'a',
       size: 3,
-      right: { value: 'c', size: 2, left: { value: 'b', size: 1 } },
+      right: { data: 'c', size: 2, left: { data: 'b', size: 1 } },
     }
     const leftHeavyTree = {
-      value: 'c',
+      data: 'c',
       size: 3,
-      left: { value: 'b', size: 2, left: { value: 'a', size: 1 } },
+      left: { data: 'b', size: 2, left: { data: 'a', size: 1 } },
     }
 
     it('Should detect a balanced tree', () => {
@@ -139,10 +157,10 @@ describe('Weight Balanced Tree Node', () => {
 
   describe('insert', () => {
     const exampleTree = {
-      value: 'b',
+      data: 'b',
       size: 3,
-      left: { value: 'a', size: 1 },
-      right: { value: 'c', size: 1 },
+      left: { data: 'a', size: 1 },
+      right: { data: 'c', size: 1 },
     }
 
     it('Should insert a value in lexicographical order', () => {
@@ -153,7 +171,7 @@ describe('Weight Balanced Tree Node', () => {
           return
         }
         yield* traverse(root.left)
-        yield root.value
+        yield root.data
         yield* traverse(root.right)
       }
 
