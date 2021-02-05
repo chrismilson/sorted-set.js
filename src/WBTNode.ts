@@ -149,8 +149,7 @@ export function balanceRight<T>(
 }
 
 /**
- * Inserts a value into the weight balanced tree with root `node` while keeping
- * the tree balanced.
+ * Inserts the value into the tree. The value must not be in the tree already.
  */
 export function insert<T>(
   value: T,
@@ -160,19 +159,35 @@ export function insert<T>(
   if (node === undefined) {
     return { data: value, size: 1 }
   }
-
+  node.size += 1
   const comparison = compare(value, node.data)
 
   if (comparison < 0) {
-    const oldSize = node.left?.size ?? 0
     node.left = insert(value, node.left, compare)
-    node.size += node.left.size - oldSize
     return balanceRight(node)
   } else if (comparison > 0) {
-    const oldSize = node.right?.size ?? 0
     node.right = insert(value, node.right, compare)
-    node.size += node.right.size - oldSize
     return balanceLeft(node)
   }
+
   return node
+}
+
+export function find<T>(
+  node: WBTNode<T> | undefined,
+  compare: (node: WBTNode<T>) => number
+): WBTNode<T> | undefined {
+  while (node) {
+    const comparison = compare(node)
+
+    if (comparison < 0) {
+      node = node.left
+    } else if (comparison > 0) {
+      node = node.right
+    } else {
+      return node
+    }
+  }
+
+  return undefined
 }

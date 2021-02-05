@@ -1,8 +1,10 @@
+import { defaultCmp } from '..'
 import {
   balanceLeft,
   balanceRight,
   doubleLeft,
   doubleRight,
+  find,
   insert,
   singleLeft,
   singleRight,
@@ -233,12 +235,41 @@ describe('Weight Balanced Tree Node', () => {
         expect(root).toBeBalanced()
       }
     })
+  })
 
-    it('Should not insert a value that is already in the tree', () => {
-      const root = deepCopy(exampleTree)
+  describe('find', () => {
+    const exampleTree = {
+      data: 'b',
+      size: 3,
+      left: { data: 'a', size: 1 },
+      right: { data: 'c', size: 1 },
+    }
 
-      const result = insert('a', root, (a, b) => (a < b ? -1 : a > b ? 1 : 0))
-      expect(result).toMatchObject(exampleTree)
+    it('Should be able to find a node by its index', () => {
+      let targetIdx = 1
+
+      const findIdx = (node: WBTNode<unknown>) => {
+        const lSize = node.left?.size ?? 0
+
+        if (targetIdx < lSize) {
+          return -1 // go left
+        } else if (lSize < targetIdx) {
+          targetIdx -= lSize
+          return 1 // go right and update target idx
+        }
+        return 0 // this is the one!
+      }
+
+      expect(find(exampleTree, findIdx)).toMatchObject(exampleTree)
+    })
+
+    it('Should be able to find a node by its value', () => {
+      const targetValue = 'c'
+
+      const findValue = (node: WBTNode<string>) =>
+        defaultCmp(targetValue, node.data)
+
+      expect(find(exampleTree, findValue)).toMatchObject(exampleTree.right)
     })
   })
 })
