@@ -173,6 +173,43 @@ export function insert<T>(
   return node
 }
 
+/**
+ * Finds a node in the subtree rooted at a given node. It does this by calling a
+ * special compare function that takes the current node as input and continues
+ * depending on the output of this function:
+ *
+ * If the compare function returns a negative number on a given node, the search
+ * will continue on the left subtree of the node.
+ *
+ * If the compare function returns a positive number on a given node, the search
+ * will continue on the right subtree of the node.
+ *
+ * If the compare function returns zero on the node, then the current node will
+ * be returned by `find`.
+ *
+ * @example
+ * ```ts
+ * const findByIndex = (idx, root) => find(root, (node) => {
+ *   const lSize = node.left?.size ?? 0
+ *
+ *   if (lSize < idx) {
+ *     idx -= lSize
+ *     return 1
+ *   } else if (idx < lSize) {
+ *     return -1
+ *   }
+ *   return 0
+ * })
+ *
+ * // Assumes we have some compare function for the type of `value`.
+ * const findByValue = (value, root) => find(root, (node) => {
+ *   return compare(value, node.data)
+ * })
+ * ```
+ *
+ * @param node The root node of the tree to search.
+ * @param compare The special compare function.
+ */
 export function find<T>(
   node: WBTNode<T> | undefined,
   compare: (node: WBTNode<T>) => number
