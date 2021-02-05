@@ -1,4 +1,4 @@
-import { insert, WBTNode } from './WBTNode'
+import { find, insert, WBTNode } from './WBTNode'
 
 /**
  * The default comparison function. Designed to be consistend with
@@ -34,23 +34,15 @@ export class SortedSet<T> {
       return undefined
     }
 
-    let curr = this.root
+    return find(this.root, (node) => {
+      const lSize = node.left?.size ?? 0
 
-    while (curr) {
-      const lSize = curr.left?.size ?? 0
-      if (idx < lSize) {
-        // The lSize was positive, since idx >= 0, so curr.left is defined.
-        curr = curr.left
-      } else if (idx > lSize) {
-        // There are now lSize plus the current node nodes that do not hold the
-        // target value.
-        idx -= lSize + 1
-        curr = curr.right
-      } else {
-        return curr.data // We will always return here.
+      if (idx > lSize) {
+        idx -= lSize
+        return 1
       }
-    }
-    return undefined // Never reached
+      return lSize - idx
+    })?.data
   }
 
   get length(): number {
@@ -63,7 +55,9 @@ export class SortedSet<T> {
    * @param value The value to insert.
    */
   insert(value: T): number {
-    this.root = insert(value, this.root, this.compare)
+    if (!this.contains(value)) {
+      this.root = insert(value, this.root, this.compare)
+    }
     // We just added a value to the tree, so the tree will be non-empty
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.root!.size
@@ -78,20 +72,13 @@ export class SortedSet<T> {
   bisect(value: T): number {
     let result = 0
 
-    let curr = this.root
-
-    while (curr !== undefined) {
-      const comparison = this.compare(value, curr.data)
-
-      if (comparison < 0) {
-        curr = curr.left
-      } else if (comparison > 0) {
-        result += (curr.left?.size ?? 0) + 1
-        curr = curr.right
-      } else {
-        return result
+    find(this.root, (node) => {
+      const comparison = this.compare(value, node.data)
+      if (comparison > 0) {
+        result += node.size
       }
-    }
+      return comparison
+    })
 
     return result
   }
@@ -100,21 +87,9 @@ export class SortedSet<T> {
    * Determines whether the value is in the set.
    */
   contains(value: T): boolean {
-    let curr = this.root
-
-    while (curr) {
-      const comparison = this.compare(value, curr.data)
-
-      if (comparison < 0) {
-        curr = curr.left
-      } else if (comparison > 0) {
-        curr = curr.right
-      } else {
-        return true
-      }
-    }
-
-    return false
+    return (
+      find(this.root, (node) => this.compare(value, node.data)) !== undefined
+    )
   }
 
   /**
