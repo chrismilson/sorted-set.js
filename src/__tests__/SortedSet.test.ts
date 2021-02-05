@@ -1,6 +1,6 @@
 import { SortedSet } from '..'
 
-describe('SortedArray', () => {
+describe('SortedSet', () => {
   describe('get', () => {
     it('Should return undefined for invalid indicies', () => {
       const arr = new SortedSet<number>((a, b) => a - b)
