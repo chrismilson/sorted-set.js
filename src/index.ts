@@ -1,4 +1,4 @@
-import { find, insert, WBTNode } from './WBTNode'
+import { insert, find, SSTNode } from './tree'
 
 /**
  * The default comparison function. Designed to be consistend with
@@ -14,7 +14,7 @@ export function defaultCmp(a: unknown, b: unknown): number {
  * A sorted set.
  */
 export class SortedSet<T> {
-  private root?: WBTNode<T>
+  private root?: SSTNode<T>
   private compare: (a: T, b: T) => number
 
   constructor(compare: (a: T, b: T) => number = defaultCmp) {
@@ -30,23 +30,24 @@ export class SortedSet<T> {
    */
   get(idx: number): T | undefined {
     // Make sure we have a valid index
-    if (idx < 0 || idx >= (this.root?.size ?? 0) || isNaN(idx)) {
+    if (idx < 0 || idx >= (this.root?.data.size ?? 0) || isNaN(idx)) {
       return undefined
     }
 
     return find(this.root, (node) => {
-      const lSize = node.left?.size ?? 0
+      const lSize = node.left?.data.size ?? 0
 
       if (idx > lSize) {
-        idx -= lSize
+        // All nodes in the left subtree plus the single parent.
+        idx -= lSize + 1
         return 1
       }
       return lSize - idx
-    })?.data
+    })?.data.value
   }
 
   get length(): number {
-    return this.root?.size ?? 0
+    return this.root?.data.size ?? 0
   }
 
   /**
@@ -55,12 +56,11 @@ export class SortedSet<T> {
    * @param value The value to insert.
    */
   insert(value: T): number {
-    if (!this.contains(value)) {
+    if (this.root === undefined || !this.contains(value)) {
       this.root = insert(value, this.root, this.compare)
     }
     // We just added a value to the tree, so the tree will be non-empty
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.root!.size
+    return this.root.data.size
   }
 
   /**
@@ -73,9 +73,9 @@ export class SortedSet<T> {
     let result = 0
 
     find(this.root, (node) => {
-      const comparison = this.compare(value, node.data)
+      const comparison = this.compare(value, node.data.value)
       if (comparison > 0) {
-        result += node.size
+        result += (node.left?.data.size ?? 0) + 1
       }
       return comparison
     })
@@ -87,9 +87,8 @@ export class SortedSet<T> {
    * Determines whether the value is in the set.
    */
   contains(value: T): boolean {
-    return (
-      find(this.root, (node) => this.compare(value, node.data)) !== undefined
-    )
+    const node = find(this.root, (node) => this.compare(value, node.data.value))
+    return node !== undefined
   }
 
   /**
@@ -101,7 +100,7 @@ export class SortedSet<T> {
 
     while (curr) {
       if (curr.left === undefined) {
-        yield curr.data
+        yield curr.data.value
         curr = curr.right
       } else {
         let pre = curr.left
@@ -114,7 +113,7 @@ export class SortedSet<T> {
           curr = curr.left
         } else {
           pre.right = undefined
-          yield curr.data
+          yield curr.data.value
           curr = curr.right
         }
       }

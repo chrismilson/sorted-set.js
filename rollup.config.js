@@ -21,5 +21,6 @@ export default {
         exclude: ["**/__tests__/**/*"]
       }
     })
-  ]
+  ],
+  external: ["wbtree"]
 }
