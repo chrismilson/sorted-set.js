@@ -13,9 +13,10 @@ export function defaultCmp(a: unknown, b: unknown): number {
 /**
  * A sorted set.
  */
-export class SortedSet<T> {
+export class SortedSet<T> implements Set<T> {
   private root?: SSTNode<T>
-  private compare: (a: T, b: T) => number
+  private compare: (a: T, b: T) => number;
+  [Symbol.toStringTag] = 'SortedSet'
 
   constructor(compare: (a: T, b: T) => number = defaultCmp) {
     this.compare = compare
@@ -58,12 +59,18 @@ export class SortedSet<T> {
    *
    * @param value The value to insert.
    */
-  add(value: T): number {
+  add(value: T): this {
     if (this.root === undefined || !this.has(value)) {
       this.root = insert(value, this.root, this.compare)
     }
-    // We just added a value to the tree, so the tree will be non-empty
-    return this.root.data.size
+    return this
+  }
+
+  /**
+   * Removes all elements from the SortedSet object.
+   */
+  clear(): void {
+    this.root = undefined
   }
 
   /**
@@ -79,6 +86,14 @@ export class SortedSet<T> {
 
     this.root = remove(value, this.root, this.compare)
     return true
+  }
+
+  /**
+   * Determines whether the value is in the set.
+   */
+  has(value: T): boolean {
+    const node = find(this.root, (node) => this.compare(value, node.data.value))
+    return node !== undefined
   }
 
   /**
@@ -102,15 +117,7 @@ export class SortedSet<T> {
   }
 
   /**
-   * Determines whether the value is in the set.
-   */
-  has(value: T): boolean {
-    const node = find(this.root, (node) => this.compare(value, node.data.value))
-    return node !== undefined
-  }
-
-  /**
-   * Iterates over the values in the set in order.
+   * Iterates over the values in the set in sorted order.
    */
   *[Symbol.iterator](): Generator<T> {
     // Performs a morris traversal of the tree.
@@ -139,9 +146,49 @@ export class SortedSet<T> {
   }
 
   /**
-   * Returns a string representation of the sorted set.
+   * Calls `callbackfn` once for each value present in the `SortedSet` object,
+   * in sorted order. If a `thisArg` parameter is provided, it will be used as
+   * the `this` value for each invocation of `callbackfn`.
+   *
+   * @param callbackfn Function to execute for each element.
+   * @param thisArg Value to use as `this` when executing `callbackfn`.
    */
-  toString(): string {
-    return `[ SortedSet ${[...this].join(', ')} ]`
+  forEach(
+    callbackfn: (value: T, value2: T, set: Set<T>) => void,
+    thisArg?: unknown
+  ): void {
+    callbackfn = callbackfn.bind(thisArg || this)
+    for (const val of this) {
+      callbackfn(val, val, this)
+    }
+  }
+
+  /**
+   * Returns a new iterator object that contains an array of [value, value] for
+   * each element in the Set object, in sorted order.
+   *
+   * This is similar to the `Map` object, so that each entry's key is the same
+   * as its value for a `SortedSet`.
+   */
+  *entries(): IterableIterator<[T, T]> {
+    for (const value of this) {
+      yield [value, value]
+    }
+  }
+  /**
+   * Returns a new iterator object that yields the values for each element in
+   * the `SortedSet` object in sorted order. (For `SortedSets`, this is the same as the
+   * `values()` method.)
+   */
+  keys(): IterableIterator<T> {
+    return this[Symbol.iterator]()
+  }
+  /**
+   * Returns a new iterator object that yields the values for each element in
+   * the `SortedSet` object in sorted order. (For `SortedSets`, this is the same as the
+   * `keys()` method.)
+   */
+  values(): IterableIterator<T> {
+    return this[Symbol.iterator]()
   }
 }
