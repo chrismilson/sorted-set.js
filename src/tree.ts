@@ -81,3 +81,55 @@ export function insert<T>(
 
   return node
 }
+
+/**
+ * Removes a value from the subtree rooted at `node` and returns the root of the
+ * resulting tree after deletion. The node must be in the tree already.
+ *
+ * @param value The value to remove.
+ * @param node The root of the tree to remove the value from.
+ * @param compare A comparison function to know which subtree to recurse into.
+ */
+export function remove<T>(
+  value: T,
+  node: SSTNode<T>,
+  compare: (a: T, b: T) => number
+): SSTNode<T> | undefined {
+  if (node === undefined) {
+    return undefined
+  }
+
+  node.data.size -= 1
+  const comparison = compare(value, node.data.value)
+
+  if (comparison < 0) {
+    // The value is in the left subtree and is definitely in the tree.
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    node.left = remove(value, node.left!, compare)
+    return balanceLeft(node)
+  } else if (comparison > 0) {
+    // The value is in the right subtree and is definitely in the tree.
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    node.right = remove(value, node.right!, compare)
+    return balanceRight(node)
+  }
+
+  // The current node should be deleted.
+  if (node.left !== undefined && node.right !== undefined) {
+    // Two children. We should replace the current node with its predecessor
+    // value and remove that value from the left subtree.
+    // since it is a predecessor it will not have two children and we will not
+    // recurse forever.
+    let pre = node.left
+    while (pre.right !== undefined) {
+      pre = pre.right
+    }
+    node.data.value = pre.data.value
+    node.left = remove(pre.data.value, node.left, compare)
+    return balanceLeft(node)
+  }
+
+  // If at most one of the children is defined, they must be a single node, as
+  // otherwise we would not be weight balanced.
+  return node.left || node.right
+}

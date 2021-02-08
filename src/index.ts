@@ -1,4 +1,4 @@
-import { insert, find, SSTNode } from './tree'
+import { insert, find, SSTNode, remove } from './tree'
 
 /**
  * The default comparison function. Designed to be consistend with
@@ -46,7 +46,10 @@ export class SortedSet<T> {
     })?.data.value
   }
 
-  get length(): number {
+  /**
+   * The number of distinct elements in the set.
+   */
+  get size(): number {
     return this.root?.data.size ?? 0
   }
 
@@ -55,12 +58,27 @@ export class SortedSet<T> {
    *
    * @param value The value to insert.
    */
-  insert(value: T): number {
-    if (this.root === undefined || !this.contains(value)) {
+  add(value: T): number {
+    if (this.root === undefined || !this.has(value)) {
       this.root = insert(value, this.root, this.compare)
     }
     // We just added a value to the tree, so the tree will be non-empty
     return this.root.data.size
+  }
+
+  /**
+   * Removes a value from the set and returns a boolean determining whether the
+   * removal was successful. (the value was or wasn't in the tree beforehand)
+   *
+   * @param value The value to remove
+   */
+  delete(value: T): boolean {
+    if (this.root === undefined || !this.has(value)) {
+      return false
+    }
+
+    this.root = remove(value, this.root, this.compare)
+    return true
   }
 
   /**
@@ -86,7 +104,7 @@ export class SortedSet<T> {
   /**
    * Determines whether the value is in the set.
    */
-  contains(value: T): boolean {
+  has(value: T): boolean {
     const node = find(this.root, (node) => this.compare(value, node.data.value))
     return node !== undefined
   }
