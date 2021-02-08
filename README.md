@@ -31,4 +31,10 @@ console.log(arr.bisect(3)) // 2 the index that 3 would be inserted to
 
 ## Usage
 
-Check out [the docs]()!
+Check out [the docs](http://shlappas.com/sorted-set.js/modules.html)!
+
+## Installation
+
+```bash
+yarn add @shlappas/sorted-set
+```
