@@ -1,9 +1,11 @@
 import { SortedSet } from '..'
 
 describe('SortedSet', () => {
+  const numberCompare = (a: number, b: number): number => a - b
+
   describe('get', () => {
     it('Should return undefined for invalid indicies', () => {
-      const arr = new SortedSet<number>((a, b) => a - b)
+      const arr = new SortedSet(numberCompare)
 
       arr.add(1)
       arr.add(5)
@@ -17,7 +19,7 @@ describe('SortedSet', () => {
 
   describe('size', () => {
     it('Should return the number of values in the tree', () => {
-      const arr = new SortedSet<number>((a, b) => a - b)
+      const arr = new SortedSet(numberCompare)
 
       expect(arr.size).toBe(0)
 
@@ -35,7 +37,7 @@ describe('SortedSet', () => {
 
   describe('iterator', () => {
     it('Should iterate the right values and in order', () => {
-      const arr = new SortedSet<number>((a, b) => a - b)
+      const arr = new SortedSet(numberCompare)
       arr.add(2)
       arr.add(3)
       arr.add(1)
@@ -50,7 +52,7 @@ describe('SortedSet', () => {
 
   describe('add', () => {
     it('Should insert values in order', () => {
-      const arr = new SortedSet<number>((a, b) => a - b)
+      const arr = new SortedSet(numberCompare)
 
       arr.add(1)
       arr.add(5)
@@ -65,7 +67,7 @@ describe('SortedSet', () => {
 
   describe('remove', () => {
     it('Should remove a value from a tree.', () => {
-      const s = new SortedSet<number>((a, b) => a - b)
+      const s = new SortedSet(numberCompare)
       const vals = []
       for (let i = 0; i < 10; i++) {
         s.add(i)
@@ -76,6 +78,25 @@ describe('SortedSet', () => {
       vals.splice(3, 1)
       s.delete(3)
       expect([...s]).toMatchObject(vals)
+    })
+  })
+
+  describe('from', () => {
+    const iterable = [1, 1, 2, 3, 6, -100]
+    const result = SortedSet.from(iterable, numberCompare)
+
+    it('Should contain the correct values', () => {
+      for (const value of iterable) {
+        expect(result.has(value)).toBe(true)
+      }
+    })
+
+    it('Should be the right size', () => {
+      expect(result.size).toBe(new Set(iterable).size)
+    })
+
+    it('Should be in-order', () => {
+      expect([...result]).toMatchObject([...result].sort())
     })
   })
 })

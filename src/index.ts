@@ -191,4 +191,24 @@ export class SortedSet<T> implements Set<T> {
   values(): IterableIterator<T> {
     return this[Symbol.iterator]()
   }
+
+  /**
+   * Creates a sorted set from an iterable.
+   *
+   * @param iterable The itereable to turn into a sorted set.
+   * @param compare The compare method for the resulting Sorted Set
+   * @returns A new sorted set whose elements are from the passed iterable.
+   */
+  static from<T>(
+    iterable: Iterable<T>,
+    compare?: (a: T, b: T) => number
+  ): SortedSet<T> {
+    const result = new SortedSet<T>(compare)
+
+    for (const value of iterable) {
+      result.add(value)
+    }
+
+    return result
+  }
 }
