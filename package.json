@@ -1,6 +1,6 @@
 {
   "name": "@shlappas/sorted-set",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A set that keeps its elements in order",
   "license": "MIT",
   "repository": {
@@ -22,7 +22,8 @@
     "fix": "yarn lint --fix",
     "prebuild": "yarn lint",
     "build": "rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "yarn build"
   },
   "jest": {
     "roots": [
