@@ -26,8 +26,8 @@ set.add(2) // { 1, 2, 3, 5 }
 console.log([...set]) // [1, 2, 3, 5]
 
 // There are extra methods too!
-console.log(arr.get(1)) // 2; The value that would be at index 1.
-console.log(arr.bisect(3)) // 2; The index that 3 would be inserted into.
+console.log(set.get(1)) // 2; The value that would be at index 1.
+console.log(set.bisect(3)) // 2; The index that 3 would be inserted into.
 ```
 
 ## Usage
